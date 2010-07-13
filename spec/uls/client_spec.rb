@@ -13,4 +13,19 @@ describe ULS::Client do
     client.application_token.should == "abcdefg3"
     client.application_token_secret.should == "abcdefg4"
   end
+
+  describe "nonce" do
+    it "contains no non-word characters" do
+      client = ULS::Client.new
+      client.nonce.should_not =~ /\W/
+    end
+  end
+
+  describe "timestamp" do
+    it "returns string form of Time.now.to_i" do
+      t = Time.now ; Time.stub!(:now).and_return(t)
+      client = ULS::Client.new
+      client.timestamp.should == t.to_i.to_s
+    end
+  end
 end
