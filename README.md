@@ -1,13 +1,7 @@
 # Ruby Univeral Location Service
 
-## Usage (probably)
+## Dependencies
 
-User Discovery:
-
-    ULS.authenticate('555-867-5309', :callback => "http://your-app.com/callback")
-
-Location:
-
-    ULS.locate('328298472938')
+    gem install rack ruby-hmac
 
 [see http://developer.veriplace.com/devportal/locationAccessOverview]
