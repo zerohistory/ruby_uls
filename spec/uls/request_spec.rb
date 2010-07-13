@@ -54,32 +54,32 @@ describe ULS::Request do
     it "includes the request URL" do
       request = new_request(new_client, 'GET', 'http://example.com')
       base = request.signature_base
-      base[1].should == 'http://example.com'
+      URI.unescape(base[1]).should == 'http://example.com'
     end
 
     it "strips params from request URL" do
       request = new_request(new_client, 'GET', 'http://example.com/?foo=bar')
       base = request.signature_base
-      base[1].should == 'http://example.com/'
+      URI.unescape(base[1]).should == 'http://example.com/'
     end
 
     it "strips anchor from request URL" do
       request = new_request(new_client, 'GET', 'http://example.com/#foo')
       base = request.signature_base
-      base[1].should == 'http://example.com/'
+      URI.unescape(base[1]).should == 'http://example.com/'
     end
 
     it "includes path in request URL" do
       request = new_request(new_client, 'GET', 'http://example.com/foo')
       base = request.signature_base
-      base[1].should == 'http://example.com/foo'
+      URI.unescape(base[1]).should == 'http://example.com/foo'
     end
 
     it "includes query_string" do
       client = new_client
       request = new_request(client, 'GET', 'http://example.com')
       base = request.signature_base
-      base[2].should == request.query_string
+      URI.unescape(base[2]).should == request.query_string
     end
   end
 
@@ -88,7 +88,14 @@ describe ULS::Request do
       client = new_client
       client.should_receive(:key).and_return('abc')
       request = new_request(client)
-      request.signature.should == HMAC::SHA1.digest('abc', request.signature_base.join('&'))
+      Base64.decode64(request.signature).should == HMAC::SHA1.digest('abc', request.signature_base.join('&'))
+    end
+
+    it "Base64 encodes and strips result" do
+      client = new_client
+      client.should_receive(:key).and_return('abc')
+      request = new_request(client)
+      request.signature.should == Base64.encode64(HMAC::SHA1.digest('abc', request.signature_base.join('&'))).strip
     end
 
     it "memoizes its result" do

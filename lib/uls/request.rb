@@ -24,7 +24,7 @@ module ULS
     end
 
     def signature
-      @signature ||= HMAC::SHA1.digest(@client.key, signature_base.join('&'))
+      @signature ||= Base64.encode64(HMAC::SHA1.digest(@client.key, signature_base.join('&'))).strip
     end
 
     def params
@@ -38,7 +38,11 @@ module ULS
     end
 
     def signature_base
-      [@method, @uri.scheme + '://' + @uri.host + @uri.path, query_string]
+      base = []
+      base << @method
+      base << escape(@uri.scheme + '://' + @uri.host + @uri.path)
+      base << escape(query_string)
+      base
     end
 
     def query_string
