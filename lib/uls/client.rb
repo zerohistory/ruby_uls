@@ -10,13 +10,22 @@ module ULS
       @application_token_secret = credentials[:application_token_secret]
     end
 
-    def nonce
-      # This implementation is what is used in the oauth gem
-      Base64.encode64(OpenSSL::Random.random_bytes(32)).gsub(/\W/, '')
+    def key
+      escape(@consumer_secret) + '&' + escape(@application_token_secret)
     end
 
-    def timestamp
-      Time.now.to_i.to_s
+    def params
+      @params ||= {
+        'oauth_consumer_key'  => escape(@consumer_key),
+        'oauth_token'         => escape(@application_token),
+        'oauth_signature_method' => 'HMAC-SHA1'
+      }
+    end
+
+    private
+
+    def escape(val)
+      URI.escape(val, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
   end
 end
