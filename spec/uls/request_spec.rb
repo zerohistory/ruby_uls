@@ -14,6 +14,11 @@ describe ULS::Request do
   end
 
   describe "params" do
+    it "includes request params" do
+      request = new_request(new_client, 'GET', 'http://example.com/?foo=bar')
+      request.params['foo'].should == 'bar'
+    end
+
     it "merges client params" do
       client = new_client
       request = new_request(client)

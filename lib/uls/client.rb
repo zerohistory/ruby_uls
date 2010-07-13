@@ -10,6 +10,20 @@ module ULS
       @application_token_secret = credentials[:application_token_secret]
     end
 
+    def post(uri)
+      request = Request.new(self, 'POST', uri)
+      request.sign!
+
+      uri = request.uri
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      req = Net::HTTP::Post.new(uri.request_uri)
+      req.set_form_data(request.params)
+      http.request(req)
+    end
+
     def key
       escape(@consumer_secret) + '&' + escape(@application_token_secret)
     end

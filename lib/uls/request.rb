@@ -29,7 +29,7 @@ module ULS
 
     def params
       @params ||= begin
-        parameters = CGI.parse(@uri.query || '')
+        parameters = @uri.query ? Rack::Utils.parse_query(@uri.query) : {}
         parameters.merge! @client.params
         parameters.merge! 'oauth_nonce' => escape(nonce)
         parameters.merge! 'oauth_timestamp' => escape(timestamp)
