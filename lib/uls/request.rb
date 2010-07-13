@@ -24,7 +24,12 @@ module ULS
     end
 
     def signature
-      @signature ||= Base64.encode64(HMAC::SHA1.digest(@client.key, signature_base.join('&'))).strip
+      @signature ||= begin
+        sig = HMAC::SHA1.digest(@client.key, signature_base.join('&'))
+        sig = Base64.encode64(sig)
+        sig = sig.strip
+        sig
+      end
     end
 
     def params
