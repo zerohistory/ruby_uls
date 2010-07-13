@@ -38,7 +38,7 @@ module ULS
     end
 
     def signature_base
-      ['GET', @uri.scheme + '://' + @uri.host + @uri.path, query_string]
+      [@method, @uri.scheme + '://' + @uri.host + @uri.path, query_string]
     end
 
     def query_string
