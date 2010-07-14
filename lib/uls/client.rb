@@ -27,8 +27,8 @@ module ULS
     def get(uri)
       request = Request.new(self, 'GET', uri)
       request.sign!
-
-      uri = uri + "?" + request.query_string
+      uri = request.uri
+      uri = uri.scheme + '://' + uri.host + uri.path + "?" + request.query_string
       open(uri)
     end
 
