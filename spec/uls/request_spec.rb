@@ -1,6 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ULS::Request do
+  def unescape(string)
+    URI.unescape(string)
+  end
+
   it "parses its uri" do
     request = new_request
     request.uri.should == URI.parse('http://example.com')
@@ -88,14 +92,14 @@ describe ULS::Request do
       client = new_client
       client.should_receive(:key).and_return('abc')
       request = new_request(client)
-      Base64.decode64(request.signature).should == HMAC::SHA1.digest('abc', request.signature_base.join('&'))
+      unescape(request.signature).should == Base64.encode64(HMAC::SHA1.digest('abc', request.signature_base.join('&'))).strip
     end
 
     it "Base64 encodes and strips result" do
       client = new_client
       client.should_receive(:key).and_return('abc')
       request = new_request(client)
-      request.signature.should == Base64.encode64(HMAC::SHA1.digest('abc', request.signature_base.join('&'))).strip
+      unescape(request.signature).should == Base64.encode64(HMAC::SHA1.digest('abc', request.signature_base.join('&'))).strip
     end
 
     it "memoizes its result" do
