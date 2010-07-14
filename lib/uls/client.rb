@@ -24,6 +24,14 @@ module ULS
       http.request(req)
     end
 
+    def get(uri)
+      request = Request.new(self, 'GET', uri)
+      request.sign!
+
+      uri = uri + "?" + request.query_string
+      open(uri)
+    end
+
     def key
       escape(@consumer_secret) + '&' + escape(@application_token_secret)
     end

@@ -28,7 +28,7 @@ module ULS
         sig = HMAC::SHA1.digest(@client.key, signature_base.join('&'))
         sig = Base64.encode64(sig)
         sig = sig.strip
-        sig
+        escape(sig)
       end
     end
 
