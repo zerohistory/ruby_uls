@@ -21,7 +21,7 @@ module ULS
 
       req = Net::HTTP::Post.new(uri.request_uri)
       req.set_form_data(request.params)
-      http.request(req)
+      http.request(req).body
     end
 
     def get(uri)
@@ -29,7 +29,7 @@ module ULS
       request.sign!
       uri = request.uri
       uri = uri.scheme + '://' + uri.host + uri.path + "?" + request.query_string
-      open(uri)
+      open(uri).read
     end
 
     def key
