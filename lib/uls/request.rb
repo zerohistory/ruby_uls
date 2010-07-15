@@ -28,7 +28,7 @@ module ULS
         sig = HMAC::SHA1.digest(@client.key, signature_base.join('&'))
         sig = Base64.encode64(sig)
         sig = sig.strip
-        escape(sig)
+        sig
       end
     end
 
@@ -52,7 +52,7 @@ module ULS
 
     def query_string
       params.sort.inject([]) { |query, (key, val)|
-        query << "#{key}=#{val}"
+        query << "#{escape(key)}=#{escape(val)}"
         query
       }.join('&')
     end
