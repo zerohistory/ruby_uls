@@ -3,7 +3,7 @@ $LOAD_PATH << File.dirname(__FILE__)
 require 'base64'
 require 'openssl'
 require 'open-uri'
-require 'hmac/sha1'
+require 'hmac-sha1'
 require 'rack/utils'
 require 'net/https'
 require 'nokogiri'
