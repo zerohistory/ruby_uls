@@ -6,7 +6,7 @@ require 'open-uri'
 require 'hmac-sha1'
 require 'rack/utils'
 require 'net/https'
-require 'nokogiri'
+require 'json'
 
 require 'uls/client'
 require 'uls/request'
@@ -17,13 +17,14 @@ module ULS
   def self.invite(phone_number, options={})
     uri = USER_DISCOVERY_URL + phone_number
     uri << "&callback=#{options[:callback]}" if options[:callback]
-    res = client.post(uri)
-    doc = Nokogiri(res)
+    doc = client.post(uri)
     case
-    when user = doc.at('user')
+    when doc['oauth_error_code']
+      raise "Error: #{doc.inspect}"
+    when user = doc['user']
       { :user_id => user['id'] }
     when
-      { :nonce => doc.at('nonce')['value'] }
+      { :nonce => doc['value'] }
     else
       raise "Unknown Response: #{res}"
     end
@@ -31,6 +32,16 @@ module ULS
 
   def self.query_invite(nonce)
     client.get("https://veriplace.com/api/1.0/requests/#{nonce}")
+  end
+
+  def self.locate(user_id, options={})
+    (callback = options[:callback]) ?
+      client.post("https://veriplace.com/api/1.1/request/users/#{user_id}/locations?callback=#{callback}") :
+      client.post("https://veriplace.com/api/1.1/users/#{user_id}/locations")
+  end
+
+  def self.permissions
+    client.get("https://veriplace.com/api/1.1/permissions")
   end
 
   def self.client
