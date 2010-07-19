@@ -19,9 +19,10 @@ module ULS
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      req = Net::HTTP::Post.new(uri.request_uri)
+      req = Net::HTTP::Post.new(uri.request_uri, { 'Accept' => 'application/json' })
       req.set_form_data(request.params)
-      http.request(req).body
+      res = http.request(req).body
+      JSON.parse(res)
     end
 
     def get(uri)
@@ -29,7 +30,8 @@ module ULS
       request.sign!
       uri = request.uri
       uri = uri.scheme + '://' + uri.host + uri.path + "?" + request.query_string
-      open(uri).read
+      res = open(uri, 'Accept' => 'application/json').read
+      JSON.parse(res)
     end
 
     def key
