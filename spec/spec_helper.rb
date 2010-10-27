@@ -1,5 +1,9 @@
 require 'rubygems'
-require 'spec'
+begin
+  require 'spec'
+rescue LoadError
+  require 'rspec'
+end
 
 require File.dirname(__FILE__) + '/../lib/ruby-uls'
 
